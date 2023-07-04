@@ -1,34 +1,45 @@
 const express = require("express");
 const router = express.Router();
+const Comment = require("../schemas/comments.js");
 const Post = require("../schemas/posts.js");
-const Comment = require("../schemas/posts.js");
+const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Types;
 
-// 댓글 목록 조회
-router.get("/comment", (req, res) => {});
-
-router.get("/comment/:commentId", (req, res) => {
-  const { commentId } = req.params;
-  const [detail] = Comment.filter(
-    (comments) => comments.commentId === Number(commentId)
-  );
-  res.json({ detail });
+//댓글 조회
+router.get("/comment", async (req, res) => {
+  const comment = await Comment.find();
+  res.send(comment);
 });
 
-const Comments = require("../schemas/comments.js");
-router.post("/comment", async (req, res) => {
-  const { commentId, nickname, content } = req.body;
+// 댓글 조회
+router.get("/comment/:postId", async (req, res) => {
+  const { postId } = req.params;
+  const comments = await Comment.find({ postId });
+  res.send(comments);
+});
 
-  const comments = await Comment.find({ commentId });
+// 댓글 작성
+router.post("/comment/:postId", async (req, res) => {
+  const { postId } = req.params;
+  const { user, content } = req.body;
+  await Comment.create({ postId, user, content });
+  res.send("댓글이 작성되었습니다.");
+});
 
-  if (comments.length) {
-    return res
-      .status(400)
-      .json({ success: false, errormessage: "이미 존재하는 commentId입니다." });
-  }
+//댓글 수정
+router.put("/comment/:id", async (req, res) => {
+  const { id } = req.params;
+  const { user, content } = req.body;
 
-  const crecom = await Comments.create({ commentId, nickname, content });
+  await Comment.updateOne({ _id: id }, { user, content });
+  res.status(200).json({ message: "댓글을 수정했습니다." });
+});
 
-  res.json({ comments: crecom });
+//댓글 삭제
+router.delete("/comment/:id", async (req, res) => {
+  const { id } = req.params;
+  await Comment.deleteOne({ _id: id });
+  res.status(200).json({ message: "댓글을 삭제했습니다." });
 });
 
 module.exports = router;

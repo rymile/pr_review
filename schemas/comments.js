@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 
 const commentsSchema = new mongoose.Schema({
-  commentId: {
-    type: Number,
+  postId: {
+    type: mongoose.Schema.Types.ObjectId,
+    res: "Post",
   },
-  nickname: {
+  user: {
     type: String,
   },
   content: {

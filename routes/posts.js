@@ -3,7 +3,6 @@ const router = express.Router();
 const Post = require("../schemas/posts.js");
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Types;
-const authmiddleware = require("../middlewares/auth-middlewares.js");
 
 //게시물 조회
 router.get("/posts", async (req, res) => {
@@ -29,14 +28,14 @@ router.get("/posts/:id", async (req, res) => {
 });
 
 //게시물 작성
-router.post("/posts", authmiddleware, async (req, res) => {
+router.post("/posts", async (req, res) => {
   const { user, title, content } = req.body;
   await Post.create({ user, title, content });
   res.status(200).json({ message: "게시글을 생성했습니다." });
 });
 
 //게시물 수정
-router.put("/posts/:id", authmiddleware, async (req, res) => {
+router.put("/posts/:id", async (req, res) => {
   const { id } = req.params;
   const { user, title, content } = req.body;
 
@@ -45,7 +44,7 @@ router.put("/posts/:id", authmiddleware, async (req, res) => {
 });
 
 //게시물 삭제
-router.delete("/posts/:id", authmiddleware, async (req, res) => {
+router.delete("/posts/:id", async (req, res) => {
   const { id } = req.params;
   await Post.deleteOne({ _id: id });
   res.status(200).json({ message: "게시글을 삭제했습니다." });

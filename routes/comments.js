@@ -4,7 +4,6 @@ const Comment = require("../schemas/comments.js");
 const Post = require("../schemas/posts.js");
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Types;
-const authmiddleware = require("../middlewares/auth-middlewares.js");
 
 //댓글 조회
 router.get("/comment", async (req, res) => {
@@ -20,7 +19,7 @@ router.get("/comment/:postId", async (req, res) => {
 });
 
 // 댓글 작성
-router.post("/comment/:postId", authmiddleware, async (req, res) => {
+router.post("/comment/:postId", async (req, res) => {
   const { postId } = req.params;
   const { user, content } = req.body;
   await Comment.create({ postId, user, content });
@@ -28,7 +27,7 @@ router.post("/comment/:postId", authmiddleware, async (req, res) => {
 });
 
 //댓글 수정
-router.put("/comment/:id", authmiddleware, async (req, res) => {
+router.put("/comment/:id", async (req, res) => {
   const { id } = req.params;
   const { user, content } = req.body;
 
@@ -37,7 +36,7 @@ router.put("/comment/:id", authmiddleware, async (req, res) => {
 });
 
 //댓글 삭제
-router.delete("/comment/:id", authmiddleware, async (req, res) => {
+router.delete("/comment/:id", async (req, res) => {
   const { id } = req.params;
   await Comment.deleteOne({ _id: id });
   res.status(200).json({ message: "댓글을 삭제했습니다." });
